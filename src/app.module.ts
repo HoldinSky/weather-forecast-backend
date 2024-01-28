@@ -9,10 +9,11 @@ import { AllExceptionsFilter } from "./utils/filters/all-exceptions.filter";
 import { LoggingInterceptor } from "./utils/interceptors/logging.interceptor";
 import { WinstonModule } from "nest-winston";
 import { winstonConfig } from "./services/winston/winston";
-import { HourlyForecast } from "./modules/forecasts/hourly/hourly.model";
-import { ForecastModule } from "./modules/forecasts/forecast.module";
+import { HourlyForecast } from "./modules/forecast/hourly/hourly.model";
+import { ForecastModule } from "./modules/forecast/forecast.module";
 import { Location } from "./modules/location/location.model";
-import { DailyForecast } from "./modules/forecasts/daily/daily.model";
+import { DailyForecast } from "./modules/forecast/daily/daily.model";
+import { Sequelize } from "sequelize-typescript";
 
 const defaultConfig: SequelizeModuleOptions = {
   ...config().postgres,
@@ -45,6 +46,4 @@ const defaultConfig: SequelizeModuleOptions = {
     },
   ],
 })
-export class AppModule {
-  constructor() {}
-}
+export class AppModule {}

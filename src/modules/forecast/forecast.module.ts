@@ -1,21 +1,19 @@
 import { Module } from "@nestjs/common";
-import { SequelizeModule } from "@nestjs/sequelize";
 import { HourlyForecast } from "./hourly/hourly.model";
 import { Location } from "../location/location.model";
 import { DailyForecast } from "./daily/daily.model";
+import { ForecastController } from "./forecast.controller";
+import { ForecastService } from "./forecast.service";
+import { SequelizeModule } from "@nestjs/sequelize";
 
 @Module({
-  controllers: [],
-  providers: [],
+  controllers: [ForecastController],
+  providers: [ForecastService],
   imports: [
     SequelizeModule.forFeature([Location, DailyForecast, HourlyForecast]),
   ],
   exports: [],
 })
 export class ForecastModule {
-  constructor() {
-    DailyForecast.drop();
-    HourlyForecast.drop();
-    Location.drop();
-  }
+  constructor() {}
 }

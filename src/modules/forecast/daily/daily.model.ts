@@ -33,7 +33,7 @@ export class DailyForecast extends Model<DailyForecast, DailyCreationAttr> {
   id: number;
 
   @Column({
-    type: DataType.TIME,
+    type: DataType.DATEONLY,
     unique: true,
     allowNull: false,
     field: "date_",
