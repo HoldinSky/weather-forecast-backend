@@ -6,7 +6,7 @@ export const winstonConfig = (): WinstonConfigDTO => {
   const transportsConfig: LoggerOptions["transports"] = [
     new transports.Console(),
     new transports.File({
-      filename: `payment-service.log`,
+      filename: `forecasts-service.log`,
       dirname: "logs",
       level: "error",
     }),

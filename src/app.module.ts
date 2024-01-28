@@ -9,16 +9,17 @@ import { AllExceptionsFilter } from "./utils/filters/all-exceptions.filter";
 import { LoggingInterceptor } from "./utils/interceptors/logging.interceptor";
 import { WinstonModule } from "nest-winston";
 import { winstonConfig } from "./services/winston/winston";
+import { HourlyForecast } from "./modules/forecasts/hourly/hourly.model";
+import { ForecastModule } from "./modules/forecasts/forecast.module";
+import { Location } from "./modules/location/location.model";
+import { DailyForecast } from "./modules/forecasts/daily/daily.model";
 
 const defaultConfig: SequelizeModuleOptions = {
   ...config().postgres,
   synchronize: true,
   autoLoadModels: true,
-  models: [],
+  models: [Location, DailyForecast, HourlyForecast],
 };
-
-// const mongoUri: string = config().mongo.uri;
-// const mongoOptions: MongooseModuleOptions = config().mongo.options;
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ const defaultConfig: SequelizeModuleOptions = {
       load: [config],
     }),
     SequelizeModule.forRoot(defaultConfig),
-    // MongooseModule.forRoot(mongoUri, mongoOptions),
+    ForecastModule,
   ],
   controllers: [AppController],
   providers: [
@@ -44,4 +45,6 @@ const defaultConfig: SequelizeModuleOptions = {
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {}
+}
