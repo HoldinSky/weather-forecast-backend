@@ -3,14 +3,10 @@ import { HttpStatus } from "@nestjs/common/enums";
 import { HttpException } from "@nestjs/common/exceptions";
 import { ArgumentsHost } from "@nestjs/common/interfaces/features/arguments-host.interface";
 import { Request, Response } from "express";
-import { WINSTON_MODULE_PROVIDER } from "nest-winston";
-import { Logger } from "winston";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor() {}
 
   catch(exception: any, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
