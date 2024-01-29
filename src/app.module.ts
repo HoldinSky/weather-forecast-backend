@@ -13,7 +13,6 @@ import { HourlyForecast } from "./modules/forecast/hourly/hourly.model";
 import { ForecastModule } from "./modules/forecast/forecast.module";
 import { Location } from "./modules/location/location.model";
 import { DailyForecast } from "./modules/forecast/daily/daily.model";
-import { Sequelize } from "sequelize-typescript";
 
 const defaultConfig: SequelizeModuleOptions = {
   ...config().postgres,

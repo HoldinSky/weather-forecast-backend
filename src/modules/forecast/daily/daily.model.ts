@@ -11,11 +11,11 @@ import { Location } from "../../location/location.model";
 
 interface DailyCreationAttr {
   time: Date;
-  temperature_c: number;
+  temperature_min_c: number;
+  temperature_max_c: number;
   humidity: number;
-  feels_like_c: number;
   precipitation_mm: number;
-  snow_cm: number;
+  rain_mm: number;
   pressure_mb: number;
   cloud_cover: number;
   wind_kph: number;
@@ -41,19 +41,19 @@ export class DailyForecast extends Model<DailyForecast, DailyCreationAttr> {
   date: Date;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
-  temperature_c: number;
+  temperature_min_c: number;
+
+  @Column({ type: DataType.FLOAT, allowNull: false })
+  temperature_max_c: number;
 
   @Column({ type: DataType.SMALLINT, allowNull: false, defaultValue: 0 })
   humidity: number;
-
-  @Column({ type: DataType.FLOAT, allowNull: false })
-  feels_like_c: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 0 })
   precipitation_mm: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 0 })
-  snow_cm: number;
+  rain_mm: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 1000 })
   pressure_mb: number;

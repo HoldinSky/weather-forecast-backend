@@ -1,8 +1,8 @@
-export interface HourlyDTO {
+export interface DailyDTO {
   ds: string;
-  temp_2: number;
+  temp_min_2: number;
+  temp_max_2: number;
   hum_2: number;
-  temp_a: number;
   precip: number;
   rain: number;
   press: number;

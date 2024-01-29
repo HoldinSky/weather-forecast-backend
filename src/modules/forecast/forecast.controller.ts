@@ -1,22 +1,41 @@
 import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
 import { ForecastService } from "./forecast.service";
+import { PythonService } from "../python/python.service";
 
 @Controller("/forecast")
 export class ForecastController {
-  constructor(private forecastService: ForecastService) {}
+  constructor(
+    private forecastService: ForecastService,
+    private pythonService: PythonService,
+  ) {}
 
-  @Get("/day/:date")
+  @Get("/daily/:location")
   getForDayInLocation(
-    @Param("date") date: Date,
-    @Query("lat") lat: number,
-    @Query("lon") lon: number,
+    @Param("location") location: string,
+    @Query("day") day: Date,
   ) {
-    if (!lat || !lon) {
+    if (!day) {
       throw new HttpException(
-        "Location must be specified. Set 'lat' parameter to wanted latitude and 'lon' to respective longitude",
+        "Date must be specified. Set 'day' parameter in format yyyy-MM-dd",
         400,
       );
     }
-    return this.forecastService.getForDayInLocation(date, { lat, lon });
+
+    return this.forecastService.getDailyInLocation(day, location);
+  }
+
+  @Get("/hourly/:location")
+  getForHoursInLocation(
+    @Param("location") location: string,
+    @Query("day") day: Date,
+  ) {
+    if (!day) {
+      throw new HttpException(
+        "Date must be specified. Set 'day' parameter in format yyyy-MM-dd",
+        400,
+      );
+    }
+
+    return this.forecastService.getHourlyInLocation(day, location);
   }
 }

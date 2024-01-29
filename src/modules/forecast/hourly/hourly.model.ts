@@ -3,21 +3,19 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasOne,
   Index,
   Model,
   Table,
 } from "sequelize-typescript";
-import { Timestamp } from "typeorm";
 import { Location } from "../../location/location.model";
 
 interface HourlyCreationAttr {
-  time: Timestamp;
+  time: Date;
   temperature_c: number;
   humidity: number;
   feels_like_c: number;
   precipitation_mm: number;
-  snow_cm: number;
+  rain_mm: number;
   pressure_mb: number;
   cloud_cover: number;
   wind_kph: number;
@@ -35,7 +33,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   id: number;
 
   @Column({ type: DataType.TIME, unique: true, allowNull: false })
-  time: Timestamp;
+  time: Date;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
   temperature_c: number;
@@ -50,7 +48,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   precipitation_mm: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 0 })
-  snow_cm: number;
+  rain_mm: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 1000 })
   pressure_mb: number;

@@ -5,10 +5,11 @@ import { DailyForecast } from "./daily/daily.model";
 import { ForecastController } from "./forecast.controller";
 import { ForecastService } from "./forecast.service";
 import { SequelizeModule } from "@nestjs/sequelize";
+import { PythonService } from "../python/python.service";
 
 @Module({
   controllers: [ForecastController],
-  providers: [ForecastService],
+  providers: [ForecastService, PythonService],
   imports: [
     SequelizeModule.forFeature([Location, DailyForecast, HourlyForecast]),
   ],
