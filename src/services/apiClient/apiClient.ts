@@ -3,15 +3,15 @@ import config from "../../../config/config";
 import { RequestOptions, ResponseData } from "./apiClient.dto";
 
 const defaultAxiosInstanceOptions = {
-  baseURL: config().node.pythonServiceUrl,
+  baseURL: config().node.pythonServiceUrl
 };
 
 async function axiosRequest<RequestData, RequestParams, ResponseObject>({
-  url,
-  method,
-  data = null,
-  params = {},
-}: RequestOptions<RequestData, RequestParams>): Promise<
+                                                                          url,
+                                                                          method,
+                                                                          data = null,
+                                                                          params = {}
+                                                                        }: RequestOptions<RequestData, RequestParams>): Promise<
   ResponseData<ResponseObject>
 > {
   const apiClient = axios.create(defaultAxiosInstanceOptions);
@@ -20,7 +20,7 @@ async function axiosRequest<RequestData, RequestParams, ResponseObject>({
     url,
     method,
     data,
-    params,
+    params
   };
 
   try {
@@ -37,8 +37,8 @@ async function axiosRequest<RequestData, RequestParams, ResponseObject>({
         response: null,
         error: {
           data: error.response.data,
-          status: error.response.status,
-        },
+          status: error.response.status
+        }
       };
     }
     if (error.request) {
@@ -49,16 +49,16 @@ async function axiosRequest<RequestData, RequestParams, ResponseObject>({
         response: null,
         error: {
           data: error.request,
-          status: undefined,
-        },
+          status: undefined
+        }
       };
     }
     return {
       response: null,
       error: {
         data: error,
-        status: undefined,
-      },
+        status: undefined
+      }
     };
   }
 }

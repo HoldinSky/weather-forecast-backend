@@ -18,65 +18,65 @@ export class ForecastService {
     private dailyRepository: typeof DailyForecast,
     @InjectModel(Location)
     private locationRepository: typeof Location,
-    private sequelize: Sequelize,
+    private sequelize: Sequelize
   ) {
-    this.updateInfoInDatabase();
+    // this.updateInfoInDatabase();
   }
 
   async getDailyInLocation(
     day: Date,
-    location_name: string,
+    location_name: string
   ): Promise<DailyForecast> {
     return this.dailyRepository.findOne({
       where: {
-        date: day,
+        date: day
       },
       include: [
         {
           association: "location",
           required: true,
           where: { name: location_name },
-          attributes: ["lat", "lon", "name"],
-        },
-      ],
+          attributes: ["lat", "lon", "name"]
+        }
+      ]
     });
   }
 
   async getHourlyInLocation(
     day: Date,
-    location_name: string,
+    location_name: string
   ): Promise<HourlyForecast[]> {
     const next_day = new Date(day.getTime() + 1 * 24 * 60 * 60 * 1000 - 1);
 
     return this.hourlyRepository.findAll({
       where: {
         time: {
-          [Op.between]: [day, next_day],
-        },
+          [Op.between]: [day, next_day]
+        }
       },
       include: [
         {
           association: "location",
           required: true,
           where: { name: location_name },
-          attributes: ["lat", "lon", "name"],
-        },
-      ],
+          attributes: ["lat", "lon", "name"]
+        }
+      ]
     });
   }
 
   async addHourlyForecastsInLocation(
     location_name: string,
-    forecasts: HourlyDTO[],
+    forecasts: HourlyDTO[]
   ) {
     const t = await this.sequelize.transaction();
 
     try {
       const location = (await this.locationRepository.findOne({
         where: {
-          name: location_name,
+          name: location_name
         },
-        transaction: t,
+        transaction: t
       })) as Location;
 
       if (!location)
@@ -94,9 +94,9 @@ export class ForecastService {
             pressure_mb: fr.press,
             cloud_cover: fr.cloud,
             wind_kph: fr.w_speed,
-            wind_degree: fr.w_dir,
+            wind_degree: fr.w_dir
           },
-          { transaction: t },
+          { transaction: t }
         );
       }
 
@@ -113,9 +113,9 @@ export class ForecastService {
     try {
       const location = (await this.locationRepository.findOne({
         where: {
-          name: location_name,
+          name: location_name
         },
-        transaction: t,
+        transaction: t
       })) as Location;
 
       if (!location)
@@ -132,9 +132,9 @@ export class ForecastService {
           pressure_mb: forecast.press,
           cloud_cover: forecast.cloud,
           wind_kph: forecast.w_speed,
-          wind_degree: forecast.w_dir,
+          wind_degree: forecast.w_dir
         },
-        { transaction: t },
+        { transaction: t }
       );
 
       await t.commit();
@@ -151,17 +151,17 @@ export class ForecastService {
     await this.dailyRepository.destroy({
       where: {
         date: {
-          [Op.lt]: now,
-        },
-      },
+          [Op.lt]: now
+        }
+      }
     });
 
     await this.hourlyRepository.destroy({
       where: {
         time: {
-          [Op.lt]: now,
-        },
-      },
+          [Op.lt]: now
+        }
+      }
     });
   }
 }

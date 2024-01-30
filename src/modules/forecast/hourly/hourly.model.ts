@@ -5,7 +5,7 @@ import {
   ForeignKey,
   Index,
   Model,
-  Table,
+  Table
 } from "sequelize-typescript";
 import { Location } from "../../location/location.model";
 
@@ -28,7 +28,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
     type: DataType.BIGINT,
     unique: true,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   })
   id: number;
 

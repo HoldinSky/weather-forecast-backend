@@ -11,14 +11,14 @@ interface LocationCreationAttr {
 @Table({
   tableName: "location",
   createdAt: false,
-  updatedAt: false,
+  updatedAt: false
 })
 export class Location extends Model<Location, LocationCreationAttr> {
   @Column({
     type: DataType.BIGINT,
     unique: true,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   })
   id: number;
 

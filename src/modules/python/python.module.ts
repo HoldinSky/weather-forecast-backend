@@ -5,8 +5,9 @@ import { PythonService } from "./python.service";
   controllers: [],
   providers: [PythonService],
   imports: [],
-  exports: [PythonService],
+  exports: [PythonService]
 })
 export class PythonModule {
-  constructor() {}
+  constructor() {
+  }
 }

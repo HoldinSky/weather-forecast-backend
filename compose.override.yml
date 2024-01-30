@@ -1,0 +1,13 @@
+services:
+  app:
+    container_name: backend-app-dev
+    image: backend-app-dev
+    build:
+      target: development
+    environment:
+      PORT: 3001
+    ports:
+      - 3001:3001
+    command: npm run start:dev
+    volumes:
+      - .:/usr/src/app

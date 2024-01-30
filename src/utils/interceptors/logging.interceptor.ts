@@ -4,7 +4,7 @@ import {
   HttpException,
   Inject,
   Injectable,
-  NestInterceptor,
+  NestInterceptor
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { WINSTON_MODULE_PROVIDER } from "nest-winston";
@@ -14,12 +14,13 @@ import { Logger } from "winston";
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
+  ) {
+  }
 
   public intercept(
     context: ExecutionContext,
-    next: CallHandler,
+    next: CallHandler
   ): Observable<any> {
     const request: Request = context.switchToHttp().getRequest();
     const { url, method, body, headers } = request;
@@ -30,7 +31,7 @@ export class LoggingInterceptor implements NestInterceptor {
       level: "info",
       message,
       body,
-      headers,
+      headers
     });
 
     return next.handle().pipe(
@@ -40,8 +41,8 @@ export class LoggingInterceptor implements NestInterceptor {
         },
         error: (err: Error): void => {
           this.logError(err, context);
-        },
-      }),
+        }
+      })
     );
   }
 
@@ -56,7 +57,7 @@ export class LoggingInterceptor implements NestInterceptor {
     this.logger.log({
       level: "info",
       message,
-      body: body ? JSON.stringify(body, null, 2) : "{}",
+      body: body ? JSON.stringify(body, null, 2) : "{}"
     });
   }
 
@@ -74,13 +75,13 @@ export class LoggingInterceptor implements NestInterceptor {
         method,
         url,
         body,
-        error,
+        error
       });
     } else {
       this.logger.log({
         level: "error",
         message: `Outgoing response - ${method} - ${url}`,
-        error: error.stack,
+        error: error.stack
       });
     }
   }

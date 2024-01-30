@@ -8,17 +8,17 @@ export const winstonConfig = (): WinstonConfigDTO => {
     new transports.File({
       filename: `forecasts-service.log`,
       dirname: "logs",
-      level: "error",
-    }),
+      level: "error"
+    })
   ];
 
   const formatConfig: LoggerOptions["format"] = format.combine(
     format.timestamp(),
-    utilities.format.nestLike(),
+    utilities.format.nestLike()
   );
 
   return {
     format: formatConfig,
-    transports: transportsConfig,
+    transports: transportsConfig
   };
 };

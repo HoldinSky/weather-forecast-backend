@@ -12,8 +12,6 @@ RUN npm ci
 
 COPY --chown=node:node . .
 
-# script for migrations
-
 USER node
 
 ###################

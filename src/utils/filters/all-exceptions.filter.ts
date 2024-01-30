@@ -6,7 +6,8 @@ import { Request, Response } from "express";
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor() {}
+  constructor() {
+  }
 
   catch(exception: any, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -22,7 +23,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       error: exception.message,
       status,
       timestamp: new Date().toISOString(),
-      path: request.url,
+      path: request.url
     };
 
     response.status(status).json(res);

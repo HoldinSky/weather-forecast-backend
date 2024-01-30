@@ -18,7 +18,7 @@ const defaultConfig: SequelizeModuleOptions = {
   ...config().postgres,
   synchronize: true,
   autoLoadModels: true,
-  models: [Location, DailyForecast, HourlyForecast],
+  models: [Location, DailyForecast, HourlyForecast]
 };
 
 @Module({
@@ -27,22 +27,23 @@ const defaultConfig: SequelizeModuleOptions = {
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [config],
+      load: [config]
     }),
     SequelizeModule.forRoot(defaultConfig),
-    ForecastModule,
+    ForecastModule
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
+      useClass: AllExceptionsFilter
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-  ],
+      useClass: LoggingInterceptor
+    }
+  ]
 })
-export class AppModule {}
+export class AppModule {
+}

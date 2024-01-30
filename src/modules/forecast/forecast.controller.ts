@@ -6,18 +6,19 @@ import { PythonService } from "../python/python.service";
 export class ForecastController {
   constructor(
     private forecastService: ForecastService,
-    private pythonService: PythonService,
-  ) {}
+    private pythonService: PythonService
+  ) {
+  }
 
   @Get("/daily/:location")
   getForDayInLocation(
     @Param("location") location: string,
-    @Query("day") day: Date,
+    @Query("day") day: Date
   ) {
     if (!day) {
       throw new HttpException(
         "Date must be specified. Set 'day' parameter in format yyyy-MM-dd",
-        400,
+        400
       );
     }
 
@@ -27,12 +28,12 @@ export class ForecastController {
   @Get("/hourly/:location")
   getForHoursInLocation(
     @Param("location") location: string,
-    @Query("day") day: Date,
+    @Query("day") day: Date
   ) {
     if (!day) {
       throw new HttpException(
         "Date must be specified. Set 'day' parameter in format yyyy-MM-dd",
-        400,
+        400
       );
     }
 

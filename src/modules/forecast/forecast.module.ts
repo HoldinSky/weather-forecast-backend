@@ -11,10 +11,9 @@ import { PythonService } from "../python/python.service";
   controllers: [ForecastController],
   providers: [ForecastService, PythonService],
   imports: [
-    SequelizeModule.forFeature([Location, DailyForecast, HourlyForecast]),
+    SequelizeModule.forFeature([Location, DailyForecast, HourlyForecast])
   ],
-  exports: [],
+  exports: []
 })
 export class ForecastModule {
-  constructor() {}
 }

@@ -5,7 +5,7 @@ import {
   ForeignKey,
   Index,
   Model,
-  Table,
+  Table
 } from "sequelize-typescript";
 import { Location } from "../../location/location.model";
 
@@ -28,7 +28,7 @@ export class DailyForecast extends Model<DailyForecast, DailyCreationAttr> {
     type: DataType.BIGINT,
     primaryKey: true,
     unique: true,
-    autoIncrement: true,
+    autoIncrement: true
   })
   id: number;
 
@@ -36,7 +36,7 @@ export class DailyForecast extends Model<DailyForecast, DailyCreationAttr> {
     type: DataType.DATEONLY,
     unique: true,
     allowNull: false,
-    field: "date_",
+    field: "date_"
   })
   date: Date;
 
