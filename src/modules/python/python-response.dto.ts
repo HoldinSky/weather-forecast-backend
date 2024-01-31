@@ -1,4 +1,5 @@
-export interface HourlyDTO {
+
+export interface PythonResponseDTO {
   ds: string;
   temp_2: number;
   hum_2: number;

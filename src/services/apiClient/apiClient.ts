@@ -6,21 +6,23 @@ const defaultAxiosInstanceOptions = {
   baseURL: config().node.pythonServiceUrl
 };
 
-async function axiosRequest<RequestData, RequestParams, ResponseObject>({
-                                                                          url,
-                                                                          method,
-                                                                          data = null,
-                                                                          params = {}
-                                                                        }: RequestOptions<RequestData, RequestParams>): Promise<
-  ResponseData<ResponseObject>
-> {
+async function axiosRequest<RequestData, RequestParams, ResponseObject>(
+  {
+    url,
+    method,
+    data = null,
+    params = {},
+    headers,
+  }: RequestOptions<RequestData, RequestParams>
+): Promise<ResponseData<ResponseObject>> {
   const apiClient = axios.create(defaultAxiosInstanceOptions);
 
   const config = {
     url,
     method,
     data,
-    params
+    params,
+    headers
   };
 
   try {
@@ -31,8 +33,6 @@ async function axiosRequest<RequestData, RequestParams, ResponseObject>({
       : { response: null, error: null };
   } catch (error) {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       return {
         response: null,
         error: {
@@ -42,9 +42,6 @@ async function axiosRequest<RequestData, RequestParams, ResponseObject>({
       };
     }
     if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
       return {
         response: null,
         error: {

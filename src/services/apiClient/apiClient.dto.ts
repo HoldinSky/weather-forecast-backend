@@ -1,3 +1,11 @@
+import { AxiosHeaders, Method, RawAxiosRequestHeaders } from "axios";
+
+type MethodsHeaders = Partial<{
+  [Key in Method as Lowercase<Key>]: AxiosHeaders;
+} & {common: AxiosHeaders}>;
+
+type HeadersType = (RawAxiosRequestHeaders & MethodsHeaders) | AxiosHeaders
+
 export enum RequestMethods {
   GET = "GET",
   POST = "POST",
@@ -10,6 +18,7 @@ export interface RequestOptions<RequestData, RequestParams> {
   method: RequestMethods;
   data?: RequestData;
   params?: RequestParams | object;
+  headers?: HeadersType;
 }
 
 export interface ResponseError {

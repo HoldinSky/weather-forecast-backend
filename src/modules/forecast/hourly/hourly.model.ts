@@ -10,7 +10,7 @@ import {
 import { Location } from "../../location/location.model";
 
 interface HourlyCreationAttr {
-  time: Date;
+  time: string;
   temperature_c: number;
   humidity: number;
   feels_like_c: number;
@@ -20,6 +20,7 @@ interface HourlyCreationAttr {
   cloud_cover: number;
   wind_kph: number;
   wind_degree: number;
+  location_id: number;
 }
 
 @Table({ tableName: "forecast_hourly", createdAt: false, updatedAt: false })
@@ -32,13 +33,13 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   })
   id: number;
 
-  @Column({ type: DataType.TIME, unique: true, allowNull: false })
-  time: Date;
+  @Column({ type: DataType.DATE, unique: true, allowNull: false })
+  time: string;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
   temperature_c: number;
 
-  @Column({ type: DataType.SMALLINT, allowNull: false, defaultValue: 0 })
+  @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 0 })
   humidity: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
@@ -53,7 +54,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   @Column({ type: DataType.FLOAT, allowNull: false, defaultValue: 1000 })
   pressure_mb: number;
 
-  @Column({ type: DataType.SMALLINT, allowNull: false })
+  @Column({ type: DataType.FLOAT, allowNull: false })
   cloud_cover: number;
 
   @Column({ type: DataType.FLOAT, allowNull: false })

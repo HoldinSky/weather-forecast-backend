@@ -13,7 +13,7 @@ const getConfig: () => ConfigDTO = () => {
     },
     postgres: {
       dialect: "postgres",
-      uri: `postgres://${env.POSTGRES_USER}:${env.POSTGRES_PASSWORD}@${env.POSTGRES_HOST}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}`,
+      uri: `postgres://${env.POSTGRES_USER}:${env.POSTGRES_PASSWORD}@${env.POSTGRES_HOST || "127.0.0.1"}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}`,
       define: {
         timestamps: false
       },

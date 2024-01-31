@@ -2,12 +2,14 @@ import { HttpException, Injectable } from "@nestjs/common";
 import { HourlyForecast } from "./hourly/hourly.model";
 import { DailyForecast } from "./daily/daily.model";
 import { Location } from "../location/location.model";
-import { HourlyDTO } from "./hourly/hourly.dto";
 import { DailyDTO } from "./daily/daily.dto";
 import { Op } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
 import { InjectModel } from "@nestjs/sequelize";
 import { Cron, CronExpression } from "@nestjs/schedule";
+import { PythonService } from "../python/python.service";
+import { MILLIS_IN_DAY } from "../../utils/constants";
+import { PythonResponseDTO } from "../python/python-response.dto";
 
 @Injectable()
 export class ForecastService {
@@ -18,9 +20,10 @@ export class ForecastService {
     private dailyRepository: typeof DailyForecast,
     @InjectModel(Location)
     private locationRepository: typeof Location,
+    private pythonService: PythonService,
     private sequelize: Sequelize
   ) {
-    // this.updateInfoInDatabase();
+    this.setup();
   }
 
   async getDailyInLocation(
@@ -46,7 +49,7 @@ export class ForecastService {
     day: Date,
     location_name: string
   ): Promise<HourlyForecast[]> {
-    const next_day = new Date(day.getTime() + 1 * 24 * 60 * 60 * 1000 - 1);
+    const next_day = new Date(day.getTime() + MILLIS_IN_DAY - 1);
 
     return this.hourlyRepository.findAll({
       where: {
@@ -67,7 +70,7 @@ export class ForecastService {
 
   async addHourlyForecastsInLocation(
     location_name: string,
-    forecasts: HourlyDTO[]
+    responses: PythonResponseDTO[]
   ) {
     const t = await this.sequelize.transaction();
 
@@ -82,19 +85,20 @@ export class ForecastService {
       if (!location)
         throw new HttpException("Failed to find specified location", 400);
 
-      for (const fr of forecasts) {
+      for (const response of responses) {
         await this.hourlyRepository.create(
           {
-            time: new Date(fr.ds),
-            temperature_c: fr.temp_2,
-            feels_like_c: fr.temp_a,
-            humidity: fr.hum_2,
-            precipitation_mm: fr.precip,
-            rain_mm: fr.rain,
-            pressure_mb: fr.press,
-            cloud_cover: fr.cloud,
-            wind_kph: fr.w_speed,
-            wind_degree: fr.w_dir
+            time: response.ds,
+            temperature_c: response.temp_2,
+            feels_like_c: response.temp_a,
+            humidity: response.hum_2,
+            precipitation_mm: response.precip,
+            rain_mm: response.rain,
+            pressure_mb: response.press,
+            cloud_cover: response.cloud,
+            wind_kph: response.w_speed,
+            wind_degree: response.w_dir,
+            location_id: location.id
           },
           { transaction: t }
         );
@@ -123,7 +127,7 @@ export class ForecastService {
 
       await this.dailyRepository.create(
         {
-          time: new Date(forecast.ds),
+          date: forecast.ds,
           temperature_min_c: forecast.temp_min_2,
           temperature_max_c: forecast.temp_max_2,
           humidity: forecast.hum_2,
@@ -144,14 +148,21 @@ export class ForecastService {
     }
   }
 
+  private async setupLocations() {
+    // const location = await this.locationRepository.findOne({ where: { name: "Kyiv" } });
+    // if (location) return Promise.resolve();
+
+    await this.locationRepository.create({ lat: 50.439365, lon: 30.476192, name: "Kyiv" });
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   private async updateInfoInDatabase() {
-    const now = Date.now();
+    const today = new Date();
 
     await this.dailyRepository.destroy({
       where: {
         date: {
-          [Op.lt]: now
+          [Op.lt]: today
         }
       }
     });
@@ -159,9 +170,30 @@ export class ForecastService {
     await this.hourlyRepository.destroy({
       where: {
         time: {
-          [Op.lt]: now
+          [Op.lt]: today
         }
       }
     });
+  }
+
+  private async setup() {
+    await this.clearDb();
+
+    await this.setupLocations();
+    await this.updateInfoInDatabase();
+
+    this.pythonService.fetchPredictForDays().then(
+      async (responses) => {
+        for (const response of responses) {
+          await this.addHourlyForecastsInLocation("Kyiv", response);
+        }
+      }
+    );
+  }
+
+  private async clearDb() {
+    await this.dailyRepository.destroy({ where: {} });
+    await this.hourlyRepository.destroy({ where: {} });
+    await this.locationRepository.destroy({ where: {} });
   }
 }
