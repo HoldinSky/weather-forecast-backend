@@ -8,8 +8,9 @@ import { Sequelize } from "sequelize-typescript";
 import { InjectModel } from "@nestjs/sequelize";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { PythonService } from "../python/python.service";
-import { MILLIS_IN_DAY } from "../../utils/constants";
+import { Coordinates, MILLIS_IN_DAY, PythonToDaily } from "../../utils/helper";
 import { PythonResponseDTO } from "../python/python-response.dto";
+import { log } from "winston";
 
 @Injectable()
 export class ForecastService {
@@ -23,12 +24,19 @@ export class ForecastService {
     private pythonService: PythonService,
     private sequelize: Sequelize
   ) {
-    this.setup();
+    this.setup().then(() => log({ level: "info", message: "Database setup is ready" }));
   }
+
+  private readonly haversineFormula = `
+    6371 * acos(
+      cos(radians(:lat)) * cos(radians(lat)) *
+      cos(radians(lon) - radians(:lon)) +
+      sin(radians(:lat)) * sin(radians(lat))
+    )`;
 
   async getDailyInLocation(
     day: Date,
-    location_name: string
+    coords: Coordinates
   ): Promise<DailyForecast> {
     return this.dailyRepository.findOne({
       where: {
@@ -38,16 +46,21 @@ export class ForecastService {
         {
           association: "location",
           required: true,
-          where: { name: location_name },
-          attributes: ["lat", "lon", "name"]
+          attributes: [
+            [this.sequelize.literal(this.haversineFormula), "distance"],
+            "lat", "lon", "name"
+          ],
+          where: this.sequelize.literal(`${this.haversineFormula} <= :distance`),
+          order: this.sequelize.literal("distance")
         }
-      ]
+      ],
+      replacements: { lat: coords.lat, lon: coords.lon, distance: coords.dist ?? 10 }
     });
   }
 
   async getHourlyInLocation(
     day: Date,
-    location_name: string
+    coords: Coordinates
   ): Promise<HourlyForecast[]> {
     const next_day = new Date(day.getTime() + MILLIS_IN_DAY - 1);
 
@@ -61,24 +74,28 @@ export class ForecastService {
         {
           association: "location",
           required: true,
-          where: { name: location_name },
-          attributes: ["lat", "lon", "name"]
+          attributes: [
+            [this.sequelize.literal(this.haversineFormula), "distance"],
+            "lat", "lon", "name"
+          ],
+          where: this.sequelize.literal(`${this.haversineFormula} <= :distance`),
+          order: this.sequelize.literal("distance")
         }
-      ]
+      ],
+      replacements: { lat: coords.lat, lon: coords.lon, distance: coords.dist ?? 10 }
     });
   }
 
-  async addHourlyForecastsInLocation(
-    location_name: string,
+  private async addHourlyForecastsInLocation(
+    coords: Coordinates,
     responses: PythonResponseDTO[]
   ) {
     const t = await this.sequelize.transaction();
 
     try {
       const location = (await this.locationRepository.findOne({
-        where: {
-          name: location_name
-        },
+        where: this.sequelize.literal(`${this.haversineFormula} <= :distance`),
+        replacements: { lat: coords.lat, lon: coords.lon, distance: 10 },
         transaction: t
       })) as Location;
 
@@ -88,7 +105,7 @@ export class ForecastService {
       for (const response of responses) {
         await this.hourlyRepository.create(
           {
-            time: response.ds,
+            time: new Date(response.ds),
             temperature_c: response.temp_2,
             feels_like_c: response.temp_a,
             humidity: response.hum_2,
@@ -111,14 +128,13 @@ export class ForecastService {
     }
   }
 
-  async addDailyForecastInLocation(location_name: string, forecast: DailyDTO) {
+  private async addDailyForecastInLocation(coords: Coordinates, forecast: DailyDTO) {
     const t = await this.sequelize.transaction();
 
     try {
       const location = (await this.locationRepository.findOne({
-        where: {
-          name: location_name
-        },
+        where: this.sequelize.literal(`${this.haversineFormula} <= :distance`),
+        replacements: { lat: coords.lat, lon: coords.lon, distance: 10 },
         transaction: t
       })) as Location;
 
@@ -127,7 +143,7 @@ export class ForecastService {
 
       await this.dailyRepository.create(
         {
-          date: forecast.ds,
+          date: new Date(forecast.ds),
           temperature_min_c: forecast.temp_min_2,
           temperature_max_c: forecast.temp_max_2,
           humidity: forecast.hum_2,
@@ -136,7 +152,8 @@ export class ForecastService {
           pressure_mb: forecast.press,
           cloud_cover: forecast.cloud,
           wind_kph: forecast.w_speed,
-          wind_degree: forecast.w_dir
+          wind_degree: forecast.w_dir,
+          location_id: location.id
         },
         { transaction: t }
       );
@@ -182,13 +199,14 @@ export class ForecastService {
     await this.setupLocations();
     await this.updateInfoInDatabase();
 
-    this.pythonService.fetchPredictForDays().then(
-      async (responses) => {
-        for (const response of responses) {
-          await this.addHourlyForecastsInLocation("Kyiv", response);
-        }
-      }
-    );
+    const responses = await this.pythonService.fetchPredictForDays();
+
+    const coords = { lat: 50.44, lon: 30.476 };
+
+    for (const response of responses) {
+      await this.addHourlyForecastsInLocation(coords, response);
+      await this.addDailyForecastInLocation(coords, PythonToDaily(response));
+    }
   }
 
   private async clearDb() {

@@ -1,4 +1,6 @@
 import {
+  BeforeCreate,
+  BeforeUpdate,
   BelongsTo,
   Column,
   DataType,
@@ -8,9 +10,10 @@ import {
   Table
 } from "sequelize-typescript";
 import { Location } from "../../location/location.model";
+import { minutesToMillis } from "../../../utils/helper";
 
 interface HourlyCreationAttr {
-  time: string;
+  time: Date;
   temperature_c: number;
   humidity: number;
   feels_like_c: number;
@@ -34,7 +37,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   id: number;
 
   @Column({ type: DataType.DATE, unique: true, allowNull: false })
-  time: string;
+  time: Date;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
   temperature_c: number;
@@ -70,4 +73,13 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
 
   @BelongsTo(() => Location, { foreignKey: "location_id" })
   location: Location;
+
+
+  @BeforeCreate
+  @BeforeUpdate
+  static adjustTimeZone(instance: HourlyForecast) {
+    if (instance.time) {
+      instance.time = new Date(instance.time.getTime() - minutesToMillis(instance.time.getTimezoneOffset()));
+    }
+  }
 }

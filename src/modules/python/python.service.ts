@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import axiosRequest from "../../services/apiClient/apiClient";
 import { RequestMethods } from "../../services/apiClient/apiClient.dto";
-import { MILLIS_IN_DAY } from "../../utils/constants";
+import { MILLIS_IN_DAY } from "../../utils/helper";
 import { PythonResponseDTO } from "./python-response.dto";
 
 @Injectable()

@@ -10,7 +10,7 @@ import {
 import { Location } from "../../location/location.model";
 
 interface DailyCreationAttr {
-  date: string;
+  date: Date;
   temperature_min_c: number;
   temperature_max_c: number;
   humidity: number;
@@ -20,6 +20,7 @@ interface DailyCreationAttr {
   cloud_cover: number;
   wind_kph: number;
   wind_degree: number;
+  location_id: number;
 }
 
 @Table({ tableName: "forecast_daily", createdAt: false, updatedAt: false })

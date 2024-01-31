@@ -1,17 +1,20 @@
-import { Controller, Get, HttpException, Param, Query } from "@nestjs/common";
+import { Controller, Get, HttpException, Query } from "@nestjs/common";
 import { ForecastService } from "./forecast.service";
+import { minutesToMillis } from "../../utils/helper";
 
 @Controller("/forecast")
 export class ForecastController {
   constructor(
-    private forecastService: ForecastService,
+    private forecastService: ForecastService
   ) {
   }
 
-  @Get("/daily/:location")
+  @Get("/daily")
   getForDayInLocation(
-    @Param("location") location: string,
-    @Query("day") day: string
+    @Query("lat") lat: number,
+    @Query("lon") lon: number,
+    @Query("day") day: string,
+    @Query("maxDist") dist: number
   ) {
     if (!day) {
       throw new HttpException(
@@ -20,13 +23,18 @@ export class ForecastController {
       );
     }
 
-    return this.forecastService.getDailyInLocation(new Date(day), location);
+    const date = new Date(day);
+    const dateWithoutOffset = new Date(date.getTime() - minutesToMillis(date.getTimezoneOffset()));
+
+    return this.forecastService.getDailyInLocation(dateWithoutOffset, { lat, lon, dist });
   }
 
-  @Get("/hourly/:location")
+  @Get("/hourly")
   getForHoursInLocation(
-    @Param("location") location: string,
-    @Query("day") day: string
+    @Query("lat") lat: number,
+    @Query("lon") lon: number,
+    @Query("day") day: string,
+    @Query("maxDist") dist: number
   ) {
     if (!day) {
       throw new HttpException(
@@ -35,6 +43,11 @@ export class ForecastController {
       );
     }
 
-    return this.forecastService.getHourlyInLocation(new Date(day), location);
+    const date = new Date(day);
+    const dateWithoutOffset = new Date(date.getTime() - minutesToMillis(date.getTimezoneOffset()));
+
+    console.log(new Date(day).toISOString());
+
+    return this.forecastService.getHourlyInLocation(dateWithoutOffset, { lat, lon, dist });
   }
 }

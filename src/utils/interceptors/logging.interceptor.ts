@@ -30,8 +30,8 @@ export class LoggingInterceptor implements NestInterceptor {
     this.logger.log({
       level: "info",
       message,
-      body,
-      headers
+      // body,
+      // headers
     });
 
     return next.handle().pipe(
@@ -57,7 +57,7 @@ export class LoggingInterceptor implements NestInterceptor {
     this.logger.log({
       level: "info",
       message,
-      body: body ? JSON.stringify(body, null, 2) : "{}"
+      // body: body ? JSON.stringify(body, null, 2) : "{}"
     });
   }
 
