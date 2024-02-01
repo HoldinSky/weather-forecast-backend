@@ -36,7 +36,7 @@ export class HourlyForecast extends Model<HourlyForecast, HourlyCreationAttr> {
   })
   id: number;
 
-  @Column({ type: DataType.DATE, unique: true, allowNull: false })
+  @Column({ type: DataType.DATE, unique: false, allowNull: false })
   time: Date;
 
   @Column({ type: DataType.FLOAT, allowNull: false })

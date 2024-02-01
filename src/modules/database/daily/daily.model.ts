@@ -35,7 +35,7 @@ export class DailyForecast extends Model<DailyForecast, DailyCreationAttr> {
 
   @Column({
     type: DataType.DATEONLY,
-    unique: true,
+    unique: false,
     allowNull: false,
     field: "date_"
   })

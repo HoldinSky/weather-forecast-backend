@@ -1,9 +1,45 @@
-import { PythonResponse } from "../modules/API/python-response";
+import { PythonResponse } from "../modules/API/models";
 import { DailyDTO } from "../modules/database/daily/daily.dto";
 
 export type Coordinates = { lat: number, lon: number, dist?: number };
 
 export const MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
+
+export const HAVERSINE_FORMULA = `
+    6371 * acos(
+      least(1, greatest(-1, 
+        cos(radians(:lat)) * cos(radians(lat)) *
+        cos(radians(lon) - radians(:lon)) +
+        sin(radians(:lat)) * sin(radians(lat))
+      ))
+    )`;
+
+export const usedLocations: string[] = [
+  "Kyiv",
+  "Lviv",
+  "Kharkiv",
+  "Vinnitsya",
+  "Chernihiv",
+  "Donetsk",
+  "Luhansk",
+  "Sumy",
+  "Dnipropetrovsk",
+  "Poltava",
+  "Zaporizhzhia",
+  "Kherson",
+  "Mykolaiv",
+  "Odesa",
+  "Cherkasy",
+  "Sevastopol",
+  "Ternopil",
+  "Zhytomyr",
+  "Rivne",
+  "Lutsk",
+  "Khmelnytskyi",
+  "Chernivtsi",
+  "Ivano-Frankivsk",
+  "Uzhgorod"
+];
 
 export const minutesToMillis = (mins: number) => mins * 60 * 1000;
 
@@ -44,5 +80,5 @@ export const PythonToDaily = (responses: PythonResponse[]): DailyDTO => {
     cloud: cloud_total / count,
     w_speed: w_speed_total / count,
     w_dir: w_dir_total / count
-  }
-}
+  };
+};
