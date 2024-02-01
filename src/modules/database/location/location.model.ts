@@ -1,6 +1,6 @@
 import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
-import { HourlyForecast } from "../forecast/hourly/hourly.model";
-import { DailyForecast } from "../forecast/daily/daily.model";
+import { HourlyForecast } from "../hourly/hourly.model";
+import { DailyForecast } from "../daily/daily.model";
 
 interface LocationCreationAttr {
   lat: number;

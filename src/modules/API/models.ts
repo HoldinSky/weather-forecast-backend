@@ -1,5 +1,12 @@
+export interface City {
+  name: string,
+  lat: number,
+  lon: number,
+  country: string,
+  local_names: any
+}
 
-export interface PythonResponseDTO {
+export interface PythonResponse {
   ds: string;
   temp_2: number;
   hum_2: number;

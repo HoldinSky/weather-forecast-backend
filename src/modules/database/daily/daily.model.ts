@@ -7,7 +7,7 @@ import {
   Model,
   Table
 } from "sequelize-typescript";
-import { Location } from "../../location/location.model";
+import { Location } from "../location/location.model";
 
 interface DailyCreationAttr {
   date: Date;

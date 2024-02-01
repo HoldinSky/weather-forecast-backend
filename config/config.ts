@@ -9,7 +9,8 @@ const getConfig: () => ConfigDTO = () => {
   return {
     node: {
       port: env.PORT,
-      pythonServiceUrl: env.PYTHON_SERVICE_URL
+      pythonServiceUrl: env.PYTHON_SERVICE_URL,
+      openWeatherApiKey: env.OPEN_WEATHER_API_KEY
     },
     postgres: {
       dialect: "postgres",

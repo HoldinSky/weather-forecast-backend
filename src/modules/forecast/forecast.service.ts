@@ -1,15 +1,15 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { HourlyForecast } from "./hourly/hourly.model";
-import { DailyForecast } from "./daily/daily.model";
-import { Location } from "../location/location.model";
-import { DailyDTO } from "./daily/daily.dto";
+import { HourlyForecast } from "../database/hourly/hourly.model";
+import { DailyForecast } from "../database/daily/daily.model";
+import { Location } from "../database/location/location.model";
+import { DailyDTO } from "../database/daily/daily.dto";
 import { Op } from "sequelize";
 import { Sequelize } from "sequelize-typescript";
 import { InjectModel } from "@nestjs/sequelize";
 import { Cron, CronExpression } from "@nestjs/schedule";
 import { PythonService } from "../python/python.service";
 import { Coordinates, MILLIS_IN_DAY, PythonToDaily } from "../../utils/helper";
-import { PythonResponseDTO } from "../python/python-response.dto";
+import { PythonResponse } from "../API/models";
 import { log } from "winston";
 
 @Injectable()
@@ -88,7 +88,7 @@ export class ForecastService {
 
   private async addHourlyForecastsInLocation(
     coords: Coordinates,
-    responses: PythonResponseDTO[]
+    responses: PythonResponse[]
   ) {
     const t = await this.sequelize.transaction();
 

@@ -9,10 +9,10 @@ import { AllExceptionsFilter } from "./utils/filters/all-exceptions.filter";
 import { LoggingInterceptor } from "./utils/interceptors/logging.interceptor";
 import { WinstonModule } from "nest-winston";
 import { winstonConfig } from "./services/winston/winston";
-import { HourlyForecast } from "./modules/forecast/hourly/hourly.model";
+import { HourlyForecast } from "./modules/database/hourly/hourly.model";
 import { ForecastModule } from "./modules/forecast/forecast.module";
-import { Location } from "./modules/location/location.model";
-import { DailyForecast } from "./modules/forecast/daily/daily.model";
+import { Location } from "./modules/database/location/location.model";
+import { DailyForecast } from "./modules/database/daily/daily.model";
 
 const defaultConfig: SequelizeModuleOptions = {
   ...config().postgres,

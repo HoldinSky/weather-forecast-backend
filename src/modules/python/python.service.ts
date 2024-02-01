@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import axiosRequest from "../../services/apiClient/apiClient";
 import { RequestMethods } from "../../services/apiClient/apiClient.dto";
 import { MILLIS_IN_DAY } from "../../utils/helper";
-import { PythonResponseDTO } from "./python-response.dto";
+import { PythonResponse } from "../API/models";
 
 @Injectable()
 export class PythonService {
@@ -17,9 +17,9 @@ export class PythonService {
       days.push(dateString.substring(0, dateString.indexOf("T")));
     }
 
-    const response: PythonResponseDTO[][] = [];
+    const response: PythonResponse[][] = [];
     for (const day of days) {
-      const resp = await axiosRequest<undefined, { start_date: string }, PythonResponseDTO[]>({
+      const resp = await axiosRequest<undefined, { start_date: string }, PythonResponse[]>({
         url: this.predictUrl,
         method: RequestMethods.GET,
         params: { start_date: day }

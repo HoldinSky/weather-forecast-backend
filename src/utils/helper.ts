@@ -1,5 +1,5 @@
-import { PythonResponseDTO } from "../modules/python/python-response.dto";
-import { DailyDTO } from "../modules/forecast/daily/daily.dto";
+import { PythonResponse } from "../modules/API/python-response";
+import { DailyDTO } from "../modules/database/daily/daily.dto";
 
 export type Coordinates = { lat: number, lon: number, dist?: number };
 
@@ -7,7 +7,7 @@ export const MILLIS_IN_DAY = 24 * 60 * 60 * 1000;
 
 export const minutesToMillis = (mins: number) => mins * 60 * 1000;
 
-export const PythonToDaily = (responses: PythonResponseDTO[]): DailyDTO => {
+export const PythonToDaily = (responses: PythonResponse[]): DailyDTO => {
   let temp_min_2: number = responses[0].temp_2;
   let temp_max_2: number = responses[0].temp_2;
   let hum_2_total: number = 0;
