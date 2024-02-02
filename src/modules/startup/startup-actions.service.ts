@@ -120,13 +120,13 @@ export class StartupActions {
 
     const locations = (await this.locationService.getAllLocations()) as Location[];
 
-    const responses = await this.pythonService.fetchPredictForDays({ lat: 50.45, lon: 30.52 });
-
     for (const location of locations) {
+      const coords = { lat: location.lat, lon: location.lon };
+      const responses = await this.pythonService.fetchPredictForDays(coords);
+
       for (const response of responses) {
-        console.log(response);
-        this.addHourlyForecastsInLocation({ lat: location.lat, lon: location.lon }, response);
-        this.addDailyForecastInLocation({ lat: location.lat, lon: location.lon }, PythonToDaily(response));
+        await this.addHourlyForecastsInLocation(coords, response);
+        await this.addDailyForecastInLocation(coords, PythonToDaily(response));
       }
     }
   }

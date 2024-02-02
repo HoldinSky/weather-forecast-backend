@@ -48,8 +48,6 @@ export class ForecastController {
     const date = new Date(day);
     const dateWithoutOffset = new Date(date.getTime() - minutesToMillis(date.getTimezoneOffset()));
 
-    console.log(new Date(day).toISOString());
-
     return this.forecastService.getHourlyInLocation(dateWithoutOffset, { lat, lon, dist });
   }
 
