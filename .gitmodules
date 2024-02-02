@@ -1,9 +1,0 @@
-[submodule "backend"]
-	path = backend
-	url = git@github.com:HoldinSky/weather-forecast-backend.git
-[submodule "frontend"]
-	path = frontend
-	url = git@github.com:sashase/weather-forecast-frontend.git
-[submodule "algorithm"]
-	path = algorithm
-	url = git@github.com:d3nnyyy/weather-forecast-algorithm.git
