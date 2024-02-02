@@ -1,11 +1,13 @@
 import { Controller, Get, HttpException, Query } from "@nestjs/common";
 import { ForecastService } from "./forecast.service";
 import { minutesToMillis } from "../../utils/helper";
+import { LocationService } from "../location/location.service";
 
 @Controller("/forecast")
 export class ForecastController {
   constructor(
-    private forecastService: ForecastService
+    private forecastService: ForecastService,
+    private locationService: LocationService
   ) {
   }
 
@@ -49,5 +51,10 @@ export class ForecastController {
     console.log(new Date(day).toISOString());
 
     return this.forecastService.getHourlyInLocation(dateWithoutOffset, { lat, lon, dist });
+  }
+
+  @Get("/available-locations")
+  getAllLocations() {
+    return this.locationService.getAllLocations();
   }
 }

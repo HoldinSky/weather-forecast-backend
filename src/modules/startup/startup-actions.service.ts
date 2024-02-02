@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { Coordinates, HAVERSINE_FORMULA, PythonToDaily, usedLocations } from "../../utils/helper";
+import { Coordinates, PythonToDaily } from "../../utils/helper";
 import { PythonResponse } from "../API/models";
 import { Location } from "../database/location/location.model";
 import { DailyDTO } from "../database/daily/daily.dto";
@@ -11,7 +11,7 @@ import { log } from "winston";
 import { HourlyForecast } from "../database/hourly/hourly.model";
 import { DailyForecast } from "../database/daily/daily.model";
 import { Sequelize } from "sequelize-typescript";
-import { OpenWeatherAPI } from "../API/open-weather";
+import { LocationService } from "../location/location.service";
 
 @Injectable()
 export class StartupActions {
@@ -21,7 +21,7 @@ export class StartupActions {
               @InjectModel(DailyForecast)
               private dailyRepository: typeof DailyForecast,
               @InjectModel(Location)
-              private locationRepository: typeof Location,
+              private locationService: LocationService,
               private pythonService: PythonService,
               private sequelize: Sequelize
   ) {
@@ -35,11 +35,7 @@ export class StartupActions {
     const t = await this.sequelize.transaction();
 
     try {
-      const location = (await this.locationRepository.findOne({
-        where: this.sequelize.literal(`${HAVERSINE_FORMULA} <= :distance`),
-        replacements: { lat: coords.lat, lon: coords.lon, distance: 10 },
-        transaction: t
-      })) as Location;
+      const location = await this.locationService.fetchByCoordinates(coords, 10);
 
       if (!location)
         throw new HttpException("Failed to find specified location", 400);
@@ -74,11 +70,7 @@ export class StartupActions {
     const t = await this.sequelize.transaction();
 
     try {
-      const location = (await this.locationRepository.findOne({
-        where: this.sequelize.literal(`${HAVERSINE_FORMULA} <= :distance`),
-        replacements: { lat: coords.lat, lon: coords.lon, distance: 10 },
-        transaction: t
-      })) as Location;
+      const location = await this.locationService.fetchByCoordinates(coords, 10);
 
       if (!location)
         throw new HttpException("Failed to find specified location", 400);
@@ -107,21 +99,6 @@ export class StartupActions {
     }
   }
 
-  private async setupLocations() {
-    for (const location of usedLocations) {
-      const city = await OpenWeatherAPI.getCityInfo(location);
-
-      if (!city || !city.lat || !city.lon) continue;
-
-      await this.locationRepository.create({
-        lat: city.lat,
-        lon: city.lon,
-        name: city.name,
-        country: city.country
-      });
-    }
-  }
-
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   private async updateInfoInDatabase() {
     const today = new Date();
@@ -142,12 +119,13 @@ export class StartupActions {
       }
     });
 
-    const locations = (await this.locationRepository.findAll({ where: {} })) as Location[];
+    const locations = (await this.locationService.fetchAll()) as Location[];
 
-    const responses = await this.pythonService.fetchPredictForDays();
+    const responses = await this.pythonService.fetchPredictForDays({ lat: 50.45, lon: 30.52 });
 
     for (const location of locations) {
       for (const response of responses) {
+        console.log(response);
         this.addHourlyForecastsInLocation({ lat: location.lat, lon: location.lon }, response);
         this.addDailyForecastInLocation({ lat: location.lat, lon: location.lon }, PythonToDaily(response));
       }
@@ -157,14 +135,13 @@ export class StartupActions {
   private async setup() {
     await this.clearDb();
 
-    await this.setupLocations();
+    await this.locationService.setup();
     await this.updateInfoInDatabase();
   }
 
   private async clearDb() {
     await this.dailyRepository.destroy({ where: {} });
     await this.hourlyRepository.destroy({ where: {} });
-    await this.locationRepository.destroy({ where: {} });
+    await this.locationService.dangerouslyClearTable();
   }
-
 }
