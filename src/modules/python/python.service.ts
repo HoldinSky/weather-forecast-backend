@@ -7,12 +7,10 @@ import { PythonResponse } from "../API/models";
 @Injectable()
 export class PythonService {
   private readonly predictUrl = "/predict";
-  private readonly defaultPredictDays = 8;
 
-  async fetchPredictForDays(coords: Coordinates, count: number = this.defaultPredictDays) {
+  async fetchPredictForDays(coords: Coordinates, count: number) {
     const dateString = new Date(Date.now()).toISOString();
 
-    const response: PythonResponse[][] = [];
     const resp = await axiosRequest<undefined, { start_date: string }, PythonResponse[]>({
       url: this.predictUrl,
       method: RequestMethods.GET,
@@ -25,8 +23,7 @@ export class PythonService {
     });
 
     if (resp.response)
-      response.push(resp.response);
 
-    return response;
+    return resp.response;
   }
 }

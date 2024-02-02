@@ -43,9 +43,9 @@ export const usedLocations: string[] = [
 
 export const minutesToMillis = (mins: number) => mins * 60 * 1000;
 
-export const PythonToDaily = (responses: PythonResponse[]): DailyDTO => {
-  let temp_min_2: number = responses[0].temp_2;
-  let temp_max_2: number = responses[0].temp_2;
+export const PythonToDaily = (hourlyResponses: PythonResponse[]): DailyDTO => {
+  let temp_min_2: number = hourlyResponses[0].temp_2;
+  let temp_max_2: number = hourlyResponses[0].temp_2;
   let hum_2_total: number = 0;
   let precip_total: number = 0;
   let rain_total: number = 0;
@@ -54,7 +54,7 @@ export const PythonToDaily = (responses: PythonResponse[]): DailyDTO => {
   let w_speed_total: number = 0;
   let w_dir_total: number = 0;
 
-  responses.forEach(r => {
+  hourlyResponses.forEach(r => {
     if (r.temp_2 > temp_max_2) temp_max_2 = r.temp_2;
     else if (r.temp_2 < temp_min_2) temp_min_2 = r.temp_2;
 
@@ -67,10 +67,10 @@ export const PythonToDaily = (responses: PythonResponse[]): DailyDTO => {
     w_dir_total += r.w_dir;
   });
 
-  const count = responses.length;
+  const count = hourlyResponses.length;
 
   return {
-    ds: responses[0].ds,
+    ds: hourlyResponses[0].ds,
     temp_min_2,
     temp_max_2,
     hum_2: hum_2_total / count,

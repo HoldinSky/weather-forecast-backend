@@ -122,11 +122,14 @@ export class StartupActions {
 
     for (const location of locations) {
       const coords = { lat: location.lat, lon: location.lon };
-      const responses = await this.pythonService.fetchPredictForDays(coords);
+      const response = await this.pythonService.fetchPredictForDays(coords, 2);
 
-      for (const response of responses) {
-        await this.addHourlyForecastsInLocation(coords, response);
-        await this.addDailyForecastInLocation(coords, PythonToDaily(response));
+      await this.addHourlyForecastsInLocation(coords, response);
+      while (response.length > 0) {
+        const oneDay = response.slice(0, 24);
+        response.splice(0, 24);
+
+        await this.addDailyForecastInLocation(coords, PythonToDaily(oneDay));
       }
     }
   }
