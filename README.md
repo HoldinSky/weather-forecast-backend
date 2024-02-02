@@ -1,4 +1,4 @@
-<h1>Weather forecasting project</h1>
+<h1>Weather forecasting backend server</h1>
 
 <h2>To start code in cloned repository</h2>
 
