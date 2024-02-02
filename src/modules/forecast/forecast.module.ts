@@ -7,10 +7,11 @@ import { ForecastService } from "./forecast.service";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { StartupActions } from "../startup/startup-actions.service";
 import { PythonService } from "../python/python.service";
+import { LocationService } from "../location/location.service";
 
 @Module({
   controllers: [ForecastController],
-  providers: [ForecastService, StartupActions, PythonService],
+  providers: [ForecastService, StartupActions, PythonService, LocationService],
   imports: [
     SequelizeModule.forFeature([Location, DailyForecast, HourlyForecast])
   ],

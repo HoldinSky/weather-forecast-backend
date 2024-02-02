@@ -20,7 +20,6 @@ export class StartupActions {
               private hourlyRepository: typeof HourlyForecast,
               @InjectModel(DailyForecast)
               private dailyRepository: typeof DailyForecast,
-              @InjectModel(Location)
               private locationService: LocationService,
               private pythonService: PythonService,
               private sequelize: Sequelize
