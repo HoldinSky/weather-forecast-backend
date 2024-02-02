@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
-import { Location } from "../database/location/location.model";
+import { Location, LocationCreationAttr } from "../database/location/location.model";
 import { Coordinates, HAVERSINE_FORMULA, usedLocations } from "../../utils/helper";
 import { OpenWeatherAPI } from "../API/open-weather";
 import { Sequelize } from "sequelize-typescript";
@@ -13,7 +13,12 @@ export class LocationService {
   constructor(@InjectModel(Location) private locationRepository: typeof Location, private sequelize: Sequelize) {
   }
 
-  async getAllLocations() {
+  async addLocations(locations: LocationCreationAttr[]) {
+    for (const loc of locations)
+      await this.locationRepository.create(loc);
+  }
+
+  getAllLocations() {
     return this.locationRepository.findAll({ where: {} });
   }
 
@@ -38,10 +43,6 @@ export class LocationService {
       replacements: { lat: coords.lat, lon: coords.lon, distance: maxDist },
       transaction: trx
     });
-  }
-
-  fetchAll() {
-    return this.locationRepository.findAll({ where: {} });
   }
 
   async dangerouslyClearTable() {

@@ -18,12 +18,12 @@ export const usedLocations: string[] = [
   "Kyiv",
   "Lviv",
   "Kharkiv",
-  "Vinnitsya",
+  "Vinnytsia",
   "Chernihiv",
   "Donetsk",
   "Luhansk",
   "Sumy",
-  "Dnipropetrovsk",
+  "Dnipro",
   "Poltava",
   "Zaporizhzhia",
   "Kherson",
@@ -38,7 +38,7 @@ export const usedLocations: string[] = [
   "Khmelnytskyi",
   "Chernivtsi",
   "Ivano-Frankivsk",
-  "Uzhgorod"
+  "Uzhhorod"
 ];
 
 export const minutesToMillis = (mins: number) => mins * 60 * 1000;

@@ -119,7 +119,7 @@ export class StartupActions {
       }
     });
 
-    const locations = (await this.locationService.fetchAll()) as Location[];
+    const locations = (await this.locationService.getAllLocations()) as Location[];
 
     const responses = await this.pythonService.fetchPredictForDays({ lat: 50.45, lon: 30.52 });
 

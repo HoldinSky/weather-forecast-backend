@@ -2,7 +2,7 @@ import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { HourlyForecast } from "../hourly/hourly.model";
 import { DailyForecast } from "../daily/daily.model";
 
-interface LocationCreationAttr {
+export interface LocationCreationAttr {
   lat: number;
   lon: number;
   name: string;
