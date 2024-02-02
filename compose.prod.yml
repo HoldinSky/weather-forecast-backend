@@ -1,0 +1,8 @@
+services:
+  app:
+    container_name: backend-app-prod
+    image: backend-app-prod
+    environment:
+      PORT: 3000
+    ports:
+      - 3000:3000
